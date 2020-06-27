@@ -1,0 +1,66 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Merge <source/child branch> into <target/parent branch>"
+  echo "The <target branch> defaults to the current branch"
+  echo "Usage: ${0} <source branch> [<target branch>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -eq 1 ]]
+then
+  sourceBranch="${1}"
+  targetBranch=$(git branch --show-current)
+elif [[ ${#} -eq 2 ]]
+then
+  sourceBranch="${1}"
+  targetBranch="${2}"
+else
+  dieUsage "Incorrect argument count ${#}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+set +e
+
+heading "Pull latest commits from origin/${targetBranch}"
+git checkout ${targetBranch}
+git pull
+dieOnError "Git pull failed"
+
+heading "[TargetBranch=${targetBranch}] Top 10 commits"
+git-history-commits ${targetBranch} 10
+
+heading "[SourceBranch=${sourceBranch}] Top 10 commits"
+git-history-commits ${sourceBranch} 10
+
+heading "Merge ${sourceBranch} --> ${targetBranch}"
+checkAndProceed "Merge ${sourceBranch}"
+git merge ${sourceBranch}
+
+checkMergeConflit
+isConflict=$?
+if [[ ${isConflict} -eq 1 ]]
+then
+  highlight "Double check the conflict resolution and execute 'git commit --all -m <commit message>'"
+  exit 0
+fi
+
+heading "[Branch=${targetBranch}] Top 10 commits AFTER merge"
+git-history 10

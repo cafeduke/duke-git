@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Refresh current branch with the remote counterpart"
+  echo "Usage: ${0}"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -ne 0 ]]
+then
+  dieUsage "Incorrect argument count ${#}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+set +e
+
+currBranch=$(git branch --show-current)
+heading "Pull latest commits from origin/${currBranch}"
+git pull origin ${currBranch}
+
+checkMergeConflit
+isConflict=$?
+if [[ ${isConflict} -eq 1 ]]
+then
+  highlight "Double check the conflict resolution and execute 'git commit --all -m <commit message>'"
+  exit 0
+fi
+
+heading "[Branch=${currBranch}] Top 10 commits AFTER pull"
+git-history 10
+
+

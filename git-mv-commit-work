@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+##
+# Move files from commit to work. The file be removed from commit and shall now be untracked.
+# This is an undo operation for  both 'git add <file>' 'git commit <file>'. So, it's as if, the files were never added to commit.
+##
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Move files from <commit> (defaults to HEAD) to workspace"
+  echo "Usage: ${0} [<commit>] <file1> [<file2 ... <fileN>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -eq 0 ]]
+then
+  dieUsage "Invalid argument count ${#}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+# Since it's 'soft', move all the files pointed by HEAD to index(stage)
+# Point the HEAD to previous commit (HEAD = HEAD - 1)
+# So, at this all the files that where committed (are now not commited) are just staged.
+git reset --soft HEAD~1
+git reset -- "${@}"
+
+# Move the files provided by user from stage to untrack (workspace)
+git-index-rm "${@}"
+
+# Commit the rest of the files with the message of original head
+git commit -C ORIG_HEAD

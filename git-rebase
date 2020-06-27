@@ -1,0 +1,63 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Rebase the current branch with latest commit of <parent branch>"
+  echo "Usage: ${0} <parent branch>"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -eq 0 ]]
+then
+  dieUsage "Invalid argument count ${#}"
+fi
+
+parBranch=${1}
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+GIT_ROOT=$(git rev-parse --show-toplevel)
+
+# Update the <parBranch> from origin
+set +e
+heading "Update parent branch '${parBranch}'"
+git pull origin ${parBranch}
+dieOnError "Git pull failed"
+
+# Get the merge point
+currBranch=$(git rev-parse --abbrev-ref HEAD)
+mergePointSHA=$(git merge-base ${currBranch} ${parBranch})
+
+heading "[Branch=${currBranch}] Top 10 commits BEFORE rebase"
+git-history 10
+
+heading "[Branch=${parBranch}] Parent is ahead by following commits"
+git log --oneline ${mergePointSHA}..master
+
+heading "Rebase current branch's position in parent branch '${parBranch}'"
+git rebase ${parBranch}
+
+checkMergeConflit
+isConflict=$?
+if [[ ${isConflict} -eq 1 ]]
+then
+  highlight "Double check the conflict resolution and execute 'git rebase --continue'"
+  exit 0
+fi
+
+heading "[Branch=${currBranch}] Top 10 commits AFTER rebase"
+git-history 10

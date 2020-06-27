@@ -1,0 +1,68 @@
+#!/bin/bash -e
+
+##
+# Join (merge/club/squash) the top <n> commits into one, interactively
+##
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Join the top <n> commits into a single commit with <mesg> (Use the HEAD's message by default)"
+  echo "Usage: ${0} <n> [<mesg>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -eq 0 || ${#} -gt 2 ]]
+then
+  dieUsage "Invalid argument count ${#}" 
+fi
+
+# The number of commits to join
+commitJoinCount=${1}
+if [[ ${#} -eq 2 ]]
+then
+  commitJoinMesg="${2}"
+else
+  commitJoinMesg=`git-history-commits 1 | cut -d" " -f2-`
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+# Show few(10) more commits than the number of commits to join
+countToList=$((commitJoinCount + 10))
+if [[ ${countToList} -lt 25 ]]
+then
+  countToList=25
+fi
+
+# Get the history listing of all the commits with their oneline description
+textCommit=`git-history-commits ${countToList} | cat -n`
+
+# The text of first 'n' commits that shall we merged into one
+textCommitJoin=`echo "${textCommit}" | head -${commitJoinCount}`
+
+# The text of commits remaining after the merge
+textCommitRemain=`echo "${textCommit}" | tail +$((commitJoinCount + 1))`
+
+echo "-------------------------  Following shall be merged into single commit   -------------------------"
+echo "${textCommitJoin}"
+echo "---------------------------------------------------------------------------------------------------"
+echo "${textCommitRemain}"
+echo ""
+echo "The new commit shall have message '${commitJoinMesg}'. "
+checkAndProceed
+git reset --soft HEAD~${commitJoinCount} && git commit -m "${commitJoinMesg}"

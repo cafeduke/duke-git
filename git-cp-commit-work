@@ -1,0 +1,50 @@
+#!/bin/bash -e
+
+##
+# Copy files from commit to work (The commit is unaffected)
+##
+
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Copy files from commit to work (The commit is unaffected)"
+  echo "Usage: ${0} <file1> [<file2 ... <filen>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -eq 0 ]]
+then
+  dieUsage "Invalid argument count ${#}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+# A soft reset
+#   - Moves all the files currently pointed by HEAD to stage
+#   - Now, if the file exists in stage then no operation is done (it is NOT overwritten), else the file is staged.
+# Point the HEAD to previous commit (HEAD = HEAD - 1)
+# So, at this all the files that where committed (are now not commited) are just staged.
+git reset --soft HEAD~1
+git reset -- "${@}"
+
+# Move the files provided by user from stage to untrack (workspace)
+git-mv-stage-work "${@}"
+
+# Commit the rest of the files with the message of original head
+git commit -C ORIG_HEAD
