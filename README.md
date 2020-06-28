@@ -15,9 +15,10 @@ git clone https://github.com/cafeduke/duke-git $HOME/bin
 # 2) Add to PATH
 # After the above step $HOME/bin/duke-git will have all the "git-*" commands.
 # Add $HOME/bin/duke-git to PATH (We can update $HOME/.profile accordingly)
+echo 'PATH=${PATH}:${HOME}/bin/duke-git' >> ${HOME}/.profile
 
 # 3) Reload
-# source ~/.profile
+source ~/.profile
 ```
 
 # Help
