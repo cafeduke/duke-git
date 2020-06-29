@@ -1,7 +1,3 @@
----
-typora-root-url: ./
----
-
 # duke-git
 Easy, intuitive, add-on git commands (bash shell scripts).
 
