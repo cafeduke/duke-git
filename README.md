@@ -1,25 +1,13 @@
+---
+typora-root-url: ./
+---
+
 # duke-git
 Easy, intuitive, add-on git commands (bash shell scripts).
 
 # Introduction
 
 The project provides a bunch of executable bash shell scripts that can be added to PATH and used as add-on git commands. These shell scripts begin with `git-`. In essence, we shall have custom, intuitive git commands to accomplish frequent tasks in git.
-
-# Install
-
-```bash
-# 1) Download contents
-# Clone the repo (or download and extract contents) to a directory (say, $HOME/bin).
-git clone https://github.com/cafeduke/duke-git $HOME/bin
-
-# 2) Add to PATH
-# After the above step $HOME/bin/duke-git will have all the "git-*" commands.
-# Add $HOME/bin/duke-git to PATH (We can update $HOME/.profile accordingly)
-echo 'PATH=${PATH}:${HOME}/bin/duke-git' >> ${HOME}/.profile
-
-# 3) Reload
-source ~/.profile
-```
 
 # Help
 
@@ -51,3 +39,12 @@ Execute command with `-h`  or `--help` to get the description and usage of the c
 | git-refresh                          | Refresh current `branch` with the remote counterpart. Open any merge conflict in meld (UI merge tool) |
 | git-rebase                           | Rebase the current `branch` with the latest `commit` of parent `branch`. Open any merge conflict in meld (UI merge tool) |
 
+# Sample Operations
+
+Lets take a look at a couple of sample git operations.
+
+## A fast-forward merge of branches
+
+The developer in branch `dev_jackie`  has added "Jackie", meanwhile the master as proceeded by 2 commits adding veggies. The developers commit does not conflict with the existing commits in master. Below, we see a fast-forward merge of the developer branch on to the master.
+
+![](/images/Merge.jpg)
