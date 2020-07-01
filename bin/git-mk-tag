@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Create a tag (Annotated tag, by default), by <name>, with <message> and tag the <commit>"
+  echo "The commit is mandatory and does NOT defaults to HEAD (as it could be unintentional, many times)"
+  echo "Usage: ${0} [--light] <name> <commit> <message>"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+# Annotated tag by default
+type="-a"
+if [[ ${#} -eq 1 && "${1}" == "--light" ]]
+then
+  type=""
+  shift
+fi
+
+if [[ ${#} -ne 3 ]]
+then
+  dieUsage "Incorrect usage"
+fi  
+name=${1}
+commit=${2}
+mesg=${3}
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+git tag ${type} ${name} -m "${mesg}" ${commit}
