@@ -55,6 +55,72 @@ function checkMergeConflit {
   done
   return ${hadConflit}
 }
+
+##
+# Check for meld installation
+##
+function checkMeld {
+
+  # Check if meld is configured in ~/gitconfig
+  checkMeld=$(grep -q meld ${HOME}/.gitconfig; echo $?)
+  if [[ ${checkMeld} -eq 1 ]]
+  then
+    echo "Configuring meld"
+    git config --global diff.tool meld
+    git config --global difftool.prompt false
+  fi  
+
+  which meld &> /dev/null
+  dieOnError "Install meld (sudo apt install meld). Required to resolve conflit."
+  echo "Meld configured and found in path"
+}
+
+##
+# Check if a function by name <$1> exists. Return 0 if function exists.
+## 
+function function_exists {
+  local fname=${1}
+  declare -f -F ${fname} >& /dev/null
+  return $?
+}
+
+##
+# Check if the element is there in the array. Returns 0 (success) if element is found and 1 otherwise.
+#
+# Arguments:
+#   to_find - The string to look out for in bash array.
+#   arr     - A bash array created using my_arr=(<elements in array>). Eg: my_arr=($(cat file.txt))
+#
+# @return: Returns 0 (success) if element is found and 1 otherwise.
+##
+function array_contains {
+  local to_find=${1}
+  shift
+  local arr=(${@})
+  
+  for curr in ${arr[@]}
+  do
+    if [[ "${curr}" == "${to_find}" ]]
+    then
+      return 0
+    fi      
+  done
+  return 1
+}
+
+##
+# Trim removes all newline, leading and trailing whitespace from <mesg> and print the resultant string.
+#
+# Arguments:
+#   mesg - The string to be trimmed
+##
+function trim {
+  local mesg=${1}
+  mesg=$(printf "%s" "$mesg" | tr -d '\n' | sed -re "s%^\s+%%" | sed -re "s%\s+$%%")
+  printf "%s" "$mesg"
+}
+
+
 ##
 # Display as heading
 #
@@ -116,32 +182,4 @@ function dieOnError {
     echo "####################################################################################################"
     exit ${status}
   fi
-}
-
-##
-# Check if a function by name <$1> exists. Return 0 if function exists.
-## 
-function_exists() {
-  local fname=${1}
-  declare -f -F ${fname} >& /dev/null
-  return $?
-}
-
-##
-# Check for meld installation
-##
-function checkMeld {
-
-  # Check if meld is configured in ~/gitconfig
-  checkMeld=$(grep -q meld ${HOME}/.gitconfig; echo $?)
-  if [[ ${checkMeld} -eq 1 ]]
-  then
-    echo "Configuring meld"
-    git config --global diff.tool meld
-    git config --global difftool.prompt false
-  fi  
-
-  which meld &> /dev/null
-  dieOnError "Install meld (sudo apt install meld). Required to resolve conflit."
-  echo "Meld configured and found in path"
 }

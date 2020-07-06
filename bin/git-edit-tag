@@ -1,0 +1,79 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Point tag to new commit and/or update the tag message. Either <commit> or <message> is required."
+  echo "The commit (if provided) has to be a seven digit hex SHA code OR 'HEAD'"
+  echo "Usage: ${0} <name> [<commit>] [<message>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -lt 2 || ${#} -gt 3 ]]
+then
+  dieUsage "Incorrect argument count ${#}"
+fi
+
+name=${1}
+shift
+
+commit=""
+mesg=""
+if [[ ${#} -eq 1 ]]
+then
+  if [[ "$1" == "HEAD" || "${1}" =~ ^[0-9A-Fa-f]{7}$ ]]
+  then
+    op=1
+    commit="${1}"
+  else
+    op=2
+    mesg="$1"
+  fi
+elif [[ ${#} -eq 2 ]]
+then
+  op=3
+  commit="${1}"
+  mesg="${2}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+# mapfile -- Read DELIM (newline by default) terminated strings, remove the newline and store in array.
+mapfile -t arr_tag <<< $(git tag --list)
+
+# Exit if the element does not exist in the array
+if ! array_contains "${name}" ${arr_tag[@]}
+then
+  echo "Tag does not exist! Use 'git-ls-tags' to see the list of tags"
+  exit 1
+fi
+
+if [[ ${op} -eq 1 ]]
+then
+  # Only commit is given
+  mesg=$(git show -s v1 --format="" | tail -1 | tr -d '\n')
+  git tag -a -f ${name} -m "${mesg}" ${commit}
+elif [[ ${op} -eq 2 ]]
+then
+  # Only mesg is given
+  git tag ${name} ${name}^{} -f -m "${mesg}"
+else
+  # Both mesg and tag are given
+  git tag ${name} ${name}^{} -f -m "${mesg}"
+  git tag -a -f ${name} -m "${mesg}" ${commit}
+fi
+
+highlight "Use 'git push -f origin <tag> to update the changes with remote."

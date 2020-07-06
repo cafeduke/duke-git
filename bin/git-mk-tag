@@ -9,7 +9,7 @@ source "${BASEDIR}/util.sh"
 function usage {
   echo "Create a tag (Annotated tag, by default), by <name>, with <message> and tag the <commit>"
   echo "The commit is mandatory and does NOT defaults to HEAD (as it could be unintentional, many times)"
-  echo "Usage: ${0} [--light] <name> <commit> <message>"
+  echo "Usage: ${0} name> <commit> <message>"
   exit 0
 }
 
@@ -21,13 +21,8 @@ then
   usage
 fi
 
-# Annotated tag by default
+# Annotated tag 
 type="-a"
-if [[ ${#} -eq 1 && "${1}" == "--light" ]]
-then
-  type=""
-  shift
-fi
 
 if [[ ${#} -ne 3 ]]
 then
@@ -40,4 +35,16 @@ mesg=${3}
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
+
+# mapfile -- Read DELIM (newline by default) terminated strings, remove the newline and store in array.
+mapfile -t arr_tag <<< $(git tag --list)
+
+# Exit if the element does not exist in the array
+if array_contains "${name}" ${arr_tag[@]}
+then
+  echo "Tag already exists! Use git-edit-tag to edit the details of an existing tag."
+  exit 1
+fi
+
+# Create a tag
 git tag ${type} ${name} -m "${mesg}" ${commit}

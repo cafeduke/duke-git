@@ -30,10 +30,14 @@ pathToFile="${1}"
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-list=$(git-ls-stage-files)
-if [[ ! "${list}" =~ "${pathToFile}" ]]
+
+# Create a bash array from the list of stage files
+arr_file=($(git-ls-stage-files))
+
+# Exit if the element does not exist in the array
+if ! array_contains "${pathToFile}" ${arr_file[@]}
 then
   echo "File '${pathToFile}' is not staged."
-  exit 0
+  exit 1
 fi
 git show :${pathToFile}
