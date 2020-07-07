@@ -39,6 +39,8 @@ Execute command with `-h`  or `--help` to get the description and usage of the c
 | git-ls-commit-files                  | List union of files (along with status code) affected by the `commit(s)` (default=`HEAD`) |
 | git-ls-stage-files                   | List files in `stage` (index/cache)                          |
 | git-ls-branch-files                  | List all the files touched by the branch. This includes files of all `commit(s)`, after branching from parent |
+| git-ls-tags                          | List tags along with the commit ids and tag metadata         |
+| git-mk-tag                           | Create a tag (Annotated tag), by name, with message and tag the `commit` |
 | git-cat<br />git-cat-commit-file     | Print contents of file from `commit` (default `commit` is `HEAD`) |
 | git-cat-stage-file                   | Print contents of file from `stage`                          |
 | git-mv-commit-work                   | Move files from `commit` (defaults to `HEAD`) to `workspace` |
@@ -48,6 +50,8 @@ Execute command with `-h`  or `--help` to get the description and usage of the c
 | git-rm-work                          | List all untracked files in `workspace`. Remove these untracked files upon confirmation. |
 | git-rm-stage-files                   | Remove given files from `stage`. The files shall be deleted permanently. |
 | git-rm-branch                        | Delete a `branch` (if present)                               |
+| git-rm-tag                           | Remove a tag                                                 |
+| git-edit-tag                         | Point tag to new commit and/or update the tag message.       |
 | git-diff-work-commit                 | Compare file in `workspace` with the file in `commit`        |
 | git-diff-work-stage                  | Compare file in `workspace` with the file in `stage`         |
 | git-diff-stage-commit                | Compare file in `stage` with the file in `commit`            |
@@ -78,3 +82,4 @@ The merge conflict is displayed using meld as shown below.
 
 Once the conflicts have been resolved the script prompts us to double check the changes and continue with `git rebase --continue`
 
+![Rebase](/images/RebaseCompletion.jpg)
