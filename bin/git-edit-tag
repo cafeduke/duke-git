@@ -64,7 +64,7 @@ fi
 if [[ ${op} -eq 1 ]]
 then
   # Only commit is given
-  mesg=$(git show -s v1 --format="" | tail -1 | tr -d '\n')
+  mesg=$(git show -s ${name} --format="" | tail -1 | tr -d '\n')
   git tag -a -f ${name} -m "${mesg}" ${commit}
 elif [[ ${op} -eq 2 ]]
 then

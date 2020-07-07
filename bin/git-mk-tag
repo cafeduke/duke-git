@@ -7,7 +7,7 @@ BASEDIR=$(dirname $(readlink -f ${0}))
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Create a tag (Annotated tag, by default), by <name>, with <message> and tag the <commit>"
+  echo "Create a tag (Annotated tag), by <name>, with <message> and tag the <commit>"
   echo "The commit is mandatory and does NOT defaults to HEAD (as it could be unintentional, many times)"
   echo "Usage: ${0} name> <commit> <message>"
   exit 0
