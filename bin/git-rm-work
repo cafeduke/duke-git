@@ -32,7 +32,7 @@ fi
 # Main
 # -------------------------------------------------------------------------------------------------
 
-workFiles=$(git clean -n)
+workFiles=$(git clean -nd)
 if [[ -z "${workFiles}" ]]
 then
   echo "There are no untracked files in workspace"
@@ -43,7 +43,7 @@ echo "--------------------------------  Following files shall be deleted  ------
 echo "${workFiles}"
 echo "---------------------------------------------------------------------------------------------------"
 checkAndProceed
-git clean -f 
+git clean -d -f 
 
 echo ""
 echo "---------------------------------------------------------------------------------------------------"
