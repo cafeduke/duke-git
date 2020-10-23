@@ -8,11 +8,14 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Join the top <n> commits into a single commit with <mesg> (Use the HEAD's message by default)"
-  echo "Usage: ${0} <n> [<mesg>]"
+  echo ""
+  echo "Usage: ${BASENAME} <n> [<mesg>]"
   exit 0
 }
 

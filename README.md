@@ -26,6 +26,9 @@ source ~/.profile
 
 # Commands
 
+## Core Commands Diagram
+![DukeGitStorageLevel](/images/DukeGitStorageLevel.jpg)
+
 ## Command Usage Help
 
 Execute command with `-h`  or `--help` to get the description and usage of the command.
@@ -43,9 +46,10 @@ Execute command with `-h`  or `--help` to get the description and usage of the c
 | git-mk-tag                           | Create a tag (Annotated tag), by name, with message and tag the `commit` |
 | git-cat<br />git-cat-commit-file     | Print contents of file from `commit` (default `commit` is `HEAD`) |
 | git-cat-stage-file                   | Print contents of file from `stage`                          |
-| git-mv-commit-work                   | Move files from `commit` (defaults to `HEAD`) to `workspace` |
+| git-mv-head-work                     | Move files from `HEAD` to `workspace`                        |
 | git-mv-stage-work                    | Move files from `stage` to `workspace`                       |
 | git-cp-commit-work                   | Copy files from`HEAD` to work (The `commit` is unaffected)   |
+| git-cp-stage-work                    | Copy files from stage to work.                               |
 | git-branch<br />git-add-branch       | Create a `branch` (if not already present) and switch to the branch. |
 | git-rm-work                          | List all untracked files in `workspace`. Remove these untracked files upon confirmation. |
 | git-rm-stage-files                   | Remove given files from `stage`. The files shall be deleted permanently. |

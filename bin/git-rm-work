@@ -7,6 +7,8 @@
 # -------------------------------------------------------------------------------------------------
 # Function
 # -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
 
 function checkAndProceed {
   echo "Continue [y]/n ?"
@@ -24,7 +26,8 @@ function checkAndProceed {
 if [[ (${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help")) ]]
 then
   echo "Remove all the untracked files"
-  echo "Usage: ${0}"
+  echo ""
+  echo "Usage: ${BASENAME}"
   exit 0
 fi
 

@@ -5,12 +5,15 @@
 # -------------------------------------------------------------------------------------------------
 
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "List commit history of this branch. All commits until it meets a commit of the parent branch"
-  echo "Usage: ${0} [-h|--help] 
-       ${0} <parent branch name>"
+  echo ""
+  echo "Usage:"
+  echo "  ${BASENAME} <parent branch name>"
   exit 0
 }
 

@@ -4,11 +4,13 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo ""
-  echo "Usage: ${0} "
+  echo "Usage: ${BASENAME} "
   exit 0
 }
 

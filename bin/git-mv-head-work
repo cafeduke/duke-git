@@ -1,19 +1,22 @@
 #!/bin/bash -e
 
 ##
-# Move files from commit to work. The file be removed from commit and shall now be untracked.
-# This is an undo operation for  both 'git add <file>' 'git commit <file>'. So, it's as if, the files were never added to commit.
+# Move files from HEAD to work. The file be removed from HEAD and shall now be untracked.
+# This is an undo operation for both 'git add <file>' 'git commit <file>'. So, it's as if, the files were never added to HEAD.
 ##
 
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Move files from <commit> (defaults to HEAD) to workspace"
-  echo "Usage: ${0} [<commit>] <file1> [<file2 ... <fileN>]"
+  echo "Move files from HEAD to workspace"
+  echo ""
+  echo "Usage: ${BASENAME} <file1> [<file2 ... <fileN>]"
   exit 0
 }
 
@@ -34,14 +37,26 @@ fi
 # Main
 # -------------------------------------------------------------------------------------------------
 
+# Error out if there are any stage files.
+# This is required because as part of soft reset (in next step) commit files will be staged (if no staged file already exists)
+# If a staged file exists then it will not be overwritten. However, we want all commit files to be staged -- So stage MUST be empty
+list=$(git-ls-stage-files)
+if [[ ! -z "${list}" ]]
+then
+  echo "Error: Following files are staged. Please ensure there are no staged files for this command."
+  echo "---------------------------------------  Staged Files  ------------------------------------------"
+  echo "$(git-ls-stage-files)"
+  echo "-------------------------------------------------------------------------------------------------"
+  exit 1
+fi
+
 # Since it's 'soft', move all the files pointed by HEAD to index(stage)
 # Point the HEAD to previous commit (HEAD = HEAD - 1)
 # So, at this all the files that where committed (are now not commited) are just staged.
 git reset --soft HEAD~1
-git reset -- "${@}"
 
-# Move the files provided by user from stage to untrack (workspace)
-git-index-rm "${@}"
+# Move the files provided by user from stage to work
+git-mv-stage-work ${@}
 
 # Commit the rest of the files with the message of original head
 git commit -C ORIG_HEAD

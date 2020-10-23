@@ -4,11 +4,14 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Create a branch (if not already present) and switch to the branch."
-  echo "Usage: ${0} <branch name>"
+  echo ""
+  echo "Usage: ${BASENAME} <branch name>"
   exit 0
 }
 

@@ -4,11 +4,15 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Diff WORK:<file> with <COMMIT>:<file>"
-  echo "Usage: ${0} [commit] <file>"
+  echo "Diff COMMIT:<file> with WORK:<file> "
+  echo "The changes done to COMMIT file to get the WORK file"
+  echo ""
+  echo "Usage: ${BASENAME} [commit] <file>"
   exit 0
 }
 

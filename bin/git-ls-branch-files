@@ -5,12 +5,14 @@
 # -------------------------------------------------------------------------------------------------
 
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "List all the files touched by the branch. This includes files of all commits, after branching from parent"
-  echo "Usage: ${0} [-h|--help] 
-       ${0} <parent branch name>"
+  echo ""
+  echo "Usage: ${BASENAME} <parent branch name>"
   exit 0
 }
 

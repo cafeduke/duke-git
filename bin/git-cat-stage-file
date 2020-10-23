@@ -1,14 +1,27 @@
 #!/bin/bash -e
 
+##
+# Description
+# -----------
+# Cat/show the contents of a single staged file.
+#
+# Error Handling
+# --------------
+# StagedFileNotFound: Handled by 'git show'
+##
+
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Print contents of file from stage"
-  echo "Usage: ${0} <path to file>"
+  echo ""
+  echo "Usage: ${BASENAME} <path to file>"
   exit 0
 }
 
@@ -30,14 +43,4 @@ pathToFile="${1}"
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-
-# Create a bash array from the list of stage files
-arr_file=($(git-ls-stage-files))
-
-# Exit if the element does not exist in the array
-if ! array_contains "${pathToFile}" ${arr_file[@]}
-then
-  echo "File '${pathToFile}' is not staged."
-  exit 1
-fi
 git show :${pathToFile}

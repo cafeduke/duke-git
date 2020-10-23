@@ -4,11 +4,15 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Diff WORK:<file> with <STAGE>:<file>"
-  echo "Usage: ${0} <file>"
+  echo "Diff STAGE:<file> with WORK:<file>"
+  echo "The changes done to STAGE file to get the WORK file"
+  echo ""
+  echo "Usage: ${BASENAME} <file>"
   exit 0
 }
 

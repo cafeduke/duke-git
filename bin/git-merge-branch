@@ -4,12 +4,15 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Merge <source/child branch> into <target/parent branch>"
   echo "The <target branch> defaults to the current branch"
-  echo "Usage: ${0} <source branch> [<target branch>]"
+  echo ""
+  echo "Usage: ${BASENAME} <source branch> [<target branch>]"
   exit 0
 }
 

@@ -4,11 +4,14 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Rebase the current branch with latest commit of <parent branch>"
-  echo "Usage: ${0} <parent branch>"
+  echo ""
+  echo "Usage: ${BASENAME} <parent branch>"
   exit 0
 }
 

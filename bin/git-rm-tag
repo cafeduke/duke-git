@@ -4,11 +4,14 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Remove a tag"
-  echo "Usage: ${0} <name>"
+  echo ""
+  echo "Usage: ${BASENAME} <name>"
   exit 0
 }
 

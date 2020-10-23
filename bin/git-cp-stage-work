@@ -1,20 +1,27 @@
 #!/bin/bash -e
 
 ##
-# Copy files from stage to work (The stage is unaffected)
+# Description
+# -----------
+# Copy files from stage to work.
+#
+# Error handling
+# --------------
+# For each file, ignore failure (if any) during copying and move on to the next.
 ##
-
-#!/bin/bash -e
 
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Copy files from stage to work (The stage is unaffected)"
-  echo "Usage: ${0} <file1> [<file2 ... <filen>]"
+  echo ""
+  echo "Usage: ${BASENAME} <file1> [<file2 ... <filen>]"
   exit 0
 }
 

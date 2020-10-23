@@ -1,14 +1,27 @@
 #!/bin/bash -e
 
+##
+# Description
+# -----------
+# Cat/show the contents of a single file in commit.
+#
+# Error Handling
+# --------------
+# StagedFileNotFound: Handled by 'git show'
+##
+
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Print contents of file from commit (default commit is 'HEAD')"
-  echo "Usage: ${0} [<commit>] <path to file>"
+  echo ""
+  echo "Usage: ${BASENAME} [<commit>] <path to file>"
   exit 0
 }
 

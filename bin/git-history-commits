@@ -4,11 +4,14 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "List commit history of last 'n' commits. By default, n=25, branch=<current checkout branch>"
-  echo "Usage: ${0} [branch] [<number of commits>]"
+  echo ""
+  echo "Usage: ${BASENAME} [branch] [<number of commits>]"
   exit 0
 }
 

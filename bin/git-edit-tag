@@ -4,12 +4,15 @@
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Point tag to new commit and/or update the tag message. Either <commit> or <message> is required."
   echo "The commit (if provided) has to be a seven digit hex SHA code OR 'HEAD'"
-  echo "Usage: ${0} <name> [<commit>] [<message>]"
+  echo ""
+  echo "Usage: ${BASENAME} <name> [<commit>] [<message>]"
   exit 0
 }
 

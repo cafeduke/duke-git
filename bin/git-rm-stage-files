@@ -1,14 +1,27 @@
 #!/bin/bash -e
 
+##
+# Description
+# -----------
+# Delete (rm) specified staged files.
+#
+# Error Handling
+# --------------
+# StagedFileNotFound: Handed by 'git restore'
+##
+
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
 BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
 source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Remove the files from stage. The files shall be deleted permanently."
-  echo "Usage: ${0} <file1> [<file2> <file3> ... <fileN>]"
+  echo ""
+  echo "Usage: ${BASENAME} <file1> [<file2> <file3> ... <fileN>]"
   exit 0
 }
 
@@ -25,15 +38,11 @@ then
   dieUsage "Incorrect argument count ${#}"
 fi
 
-pathToFile="${1}"
-
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-list=$(git-ls-stage-files)
-if [[ ! "${list}" =~ "${pathToFile}" ]]
-then
-  echo "File '${pathToFile}' is not staged."
-  exit 0
-fi
-git rm --cached --force --quiet -- ${@}
+
+# Using 'git resore --staged' instead of 'git rm --cached'. 
+# The rm command has issues
+#  - A 'git status' shows 'deleted' as staged status. So, it is not a clean undo (As if never staged)
+git restore --staged -- ${@}
