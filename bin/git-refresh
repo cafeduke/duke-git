@@ -10,8 +10,9 @@ source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Refresh current branch with the remote counterpart"
+  echo "The <remote> defaults to 'origin'"
   echo ""
-  echo "Usage: ${BASENAME}"
+  echo "Usage: ${BASENAME} [<remote>]"
   exit 0
 }
 
@@ -23,9 +24,15 @@ then
   usage
 fi
 
-if [[ ${#} -ne 0 ]]
+if [[ ${#} -gt 1 ]]
 then
   dieUsage "Incorrect argument count ${#}"
+fi
+
+remote="origin"
+if [[ ${#} -eq 1 ]]
+then
+  remote="${1}"
 fi
 
 # -------------------------------------------------------------------------------------------------
@@ -35,8 +42,8 @@ fi
 set +e
 
 currBranch=$(git branch --show-current)
-heading "Pull latest commits from origin/${currBranch}"
-git pull origin ${currBranch}
+heading "Pull latest commits from ${remote}/${currBranch}"
+git pull ${remote} ${currBranch}
 
 checkMergeConflit
 isConflict=$?

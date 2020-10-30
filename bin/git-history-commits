@@ -1,4 +1,5 @@
 #!/bin/bash -e
+# Note: 
 
 # -------------------------------------------------------------------------------------------------
 # Functions
@@ -11,7 +12,7 @@ source "${BASEDIR}/util.sh"
 function usage {
   echo "List commit history of last 'n' commits. By default, n=25, branch=<current checkout branch>"
   echo ""
-  echo "Usage: ${BASENAME} [branch] [<number of commits>]"
+  echo "Usage: ${BASENAME} [--long] [branch] [<number of commits>]"
   exit 0
 }
 
@@ -23,9 +24,17 @@ then
   usage
 fi
 
+islong=false
 branch=""
 count="25"
-if [ ${#} -eq 1 ]
+
+if [[ ${#} -ge 1 && "${1}" == "--long" ]]
+then
+  islong=true
+  shift
+fi
+
+if [[ ${#} -eq 1 ]]
 then
   if [[ "${1}" =~ ^[0-9]+$ ]]
   then
@@ -42,4 +51,17 @@ fi
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-git log ${branch} --oneline -n ${count}
+
+if [[ "$islong" == true ]]
+then
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%h%Creset|%s|%aN|%ad|%C(green bold)%d%n" \
+    --date=format:'%a,%d-%b-%Y %H:%M:%S' \
+    -n ${count} ${branch} | column -s "|" -t
+else
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%h%Creset|%s|%C(green bold)%d%n" \
+    -n ${count} ${branch} | column -s "|" -t
+fi

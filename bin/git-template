@@ -10,6 +10,7 @@ source "${BASEDIR}/util.sh"
 
 function usage {
   echo ""
+  echo ""
   echo "Usage: ${BASENAME} "
   exit 0
 }

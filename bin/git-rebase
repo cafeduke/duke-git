@@ -10,8 +10,9 @@ source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Rebase the current branch with latest commit of <parent branch>"
+  echo "The <remote> defaults to 'origin'"
   echo ""
-  echo "Usage: ${BASENAME} <parent branch>"
+  echo "Usage: ${BASENAME} [<remote>] <parent branch>"
   exit 0
 }
 
@@ -28,17 +29,25 @@ then
   dieUsage "Invalid argument count ${#}"
 fi
 
-parBranch=${1}
+remote="origin"
+if [[ ${#} -eq 1 ]]
+then
+  parBranch="${1}"
+elif [[ ${#} -eq 2 ]]
+then
+  remote="${1}"
+  parBranch="${2}"
+fi
 
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
 GIT_ROOT=$(git rev-parse --show-toplevel)
 
-# Update the <parBranch> from origin
+# Update the <parBranch> from remote
 set +e
 heading "Update parent branch '${parBranch}'"
-git pull origin ${parBranch}
+git pull ${remote} ${parBranch}
 dieOnError "Git pull failed"
 
 # Get the merge point
