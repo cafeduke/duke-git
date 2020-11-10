@@ -38,7 +38,7 @@ if [[ ${#} -eq 2 ]]
 then
   commitJoinMesg="${2}"
 else
-  commitJoinMesg=`git-history-commits 1 | cut -d" " -f2-`
+  commitJoinMesg=$(git log -n 1 --pretty=format:"%s")
 fi
 
 # -------------------------------------------------------------------------------------------------
@@ -53,13 +53,19 @@ then
 fi
 
 # Get the history listing of all the commits with their oneline description
-textCommit=`git-history-commits ${countToList} | cat -n`
+textCommit=$(git log -n ${countToList} --color=always --pretty=format:"%C(yellow bold)%h%Creset %s")
 
-# The text of first 'n' commits that shall we merged into one
-textCommitJoin=`echo "${textCommit}" | head -${commitJoinCount}`
+# The text of first 'n' commits that we shall merged into one
+textCommitJoin=$(echo "${textCommit}" | head -${commitJoinCount})
 
 # The text of commits remaining after the merge
-textCommitRemain=`echo "${textCommit}" | tail +$((commitJoinCount + 1))`
+textCommitRemain=$(echo "${textCommit}" | tail +$((commitJoinCount + 1)))
+if [[ -z "${textCommitRemain}" ]]
+then
+  echo "ERROR: Cannot merge all commits!"
+  echo "Please provide the number of commits to value between 2 to n-1. Here, n=<total number of commits>"
+  exit 1
+fi
 
 echo "-------------------------  Following shall be merged into single commit   -------------------------"
 echo "${textCommitJoin}"
@@ -68,4 +74,7 @@ echo "${textCommitRemain}"
 echo ""
 echo "The new commit shall have message '${commitJoinMesg}'. "
 checkAndProceed
-git reset --soft HEAD~${commitJoinCount} && git commit -m "${commitJoinMesg}"
+softTargetCommitId=$(git log -n $((commitJoinCount + 1)) --pretty=format:"%H" | tail -1)
+git reset --soft ${softTargetCommitId} && git commit -m "${commitJoinMesg}"
+
+

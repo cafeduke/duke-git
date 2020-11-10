@@ -9,9 +9,9 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "List commit history of last 'n' commits. By default, n=25, branch=<current checkout branch>"
+  echo "List the files having merge conflict in work (work-tree)"
   echo ""
-  echo "Usage: ${BASENAME} [--long] [branch] [<number of commits>]"
+  echo "Usage: ${BASENAME}"
   exit 0
 }
 
@@ -23,44 +23,12 @@ then
   usage
 fi
 
-islong=false
-branch=""
-count="25"
-
-if [[ ${#} -ge 1 && "${1}" == "--long" ]]
+if [[ ${#} -ne 0 ]]
 then
-  islong=true
-  shift
-fi
-
-if [[ ${#} -eq 1 ]]
-then
-  if [[ "${1}" =~ ^[0-9]+$ ]]
-  then
-    count="${1}"
-  else
-    branch="${1}"
-  fi  
-elif [[ ${#} -eq 2 ]]
-then
-  branch="${1}"
-  count="${2}"
+  dieUsage "Invalid argument count ${#}"
 fi
 
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-
-if [[ "$islong" == true ]]
-then
-  git log \
-    --color=always \
-    --pretty=format:"%C(yellow bold)%H%Creset|%s|%aN|%ad|%C(green bold)%d%n" \
-    --date=format:'%a,%d-%b-%Y %H:%M:%S' \
-    -n ${count} ${branch} | column -s "|" -t
-else
-  git log \
-    --color=always \
-    --pretty=format:"%C(yellow bold)%h%Creset|%s|%C(green bold)%d%n" \
-    -n ${count} ${branch} | column -s "|" -t
-fi
+git diff --name-only --diff-filter=U

@@ -43,17 +43,31 @@ set +e
 
 currBranch=$(git branch --show-current)
 heading "Pull latest commits from ${remote}/${currBranch}"
-git pull ${remote} ${currBranch}
 
+# Pull and capture status
+git pull ${remote} ${currBranch}
+pullStatus=$?
+
+# Check if there is any merge conflict
 checkMergeConflit
 isConflict=$?
-if [[ ${isConflict} -eq 1 ]]
+
+# Since pull suceeded, there were no conflicts. Auto-merge is done.
+if [[ ${pullStatus} -eq 0 ]]
 then
-  highlight "Double check the conflict resolution and execute 'git commit --all -m <commit message>'"
+  heading "[Branch=${currBranch}] Top 10 commits AFTER pull"
+  git-history 10
   exit 0
 fi
 
-heading "[Branch=${currBranch}] Top 10 commits AFTER pull"
-git-history 10
+# Note: If we are here, 'git pull' failed (exited with 1).
 
+# Pull failed, but there are were no conficts -- Error during pull
+# This means refresh fails
+if [[ ${isConflict} -eq 0 ]]
+then
+  exit 1
+fi
 
+# Pull failed, because there were conflicts and these are resolved
+highlight "Double check the conflict resolution and execute 'git commit --all -m <commit message>'"

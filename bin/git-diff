@@ -1,0 +1,72 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Wrapper around 'git diff' to list one file at a time."
+  echo "Do NOT use '--' and '--name-only' options of 'git diff' as it is used by the wrapper"
+  echo ""
+  echo "Usage: ${BASENAME} <arguments that 'git diff' takes>"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+# If the original diff command just wanted names of files. Hand over to 'git diff' and exit.
+if [[ "$@" =~ "--name-only" ]]
+then
+  git diff --color=always $@
+  exit $?
+fi
+
+# Store names of files to be diffed in an array 'arr_diff_name'
+files=$(git diff --name-only "$@")
+if [[ -z "${files}" ]]
+then
+  echo "Nothing to diff"
+  exit 0
+fi
+mapfile -t arr_diff_name <<< $(echo "${files}")
+
+index=0
+while [[ ${index} -lt ${#arr_diff_name[@]} ]]
+do
+  clear
+  currFile="${arr_diff_name[$index]}"
+  content=$(git diff --color=always $@ -- "${currFile}")
+  echo "
+____________________ Begin ${currFile} ____________________
+${content}
+____________________  End ${currFile}  ____________________" | more
+
+  if [[ ${index} -eq 0 ]]
+  then
+    mesg="Type 'q' to quit. Type any other key for next..."
+  else
+    mesg="Type 'p' for previous, 'q' to quit. Type any other key for next..."
+  fi
+
+  echo "${mesg}"
+  read -rsn1 ch
+  if [[ "$ch" == "p" && ${index} -gt 0 ]]
+  then
+    index=$((index-1))
+  elif [[ "$ch" == "q" ]]
+  then
+    exit 0
+  else
+    ((++index))
+  fi
+done
