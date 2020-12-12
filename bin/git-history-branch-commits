@@ -39,6 +39,6 @@ parBranch=${1}
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-currBranch=`git rev-parse --abbrev-ref HEAD`
-mergePointSHA=`git merge-base ${currBranch} ${parBranch}`
+currBranch=$(git rev-parse --abbrev-ref HEAD)
+mergePointSHA=$(git merge-base ${currBranch} ${parBranch})
 git log --oneline ${mergePointSHA}..HEAD

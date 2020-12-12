@@ -9,7 +9,7 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Delete a remote branch (if present)"
+  echo "Delete a remote (default origin) branch (if present)"
   echo ""
   echo "Usage: ${BASENAME} [<remote>] <branch name>"
   exit 0

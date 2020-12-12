@@ -162,7 +162,7 @@ function highlight {
 function dieUsage {
   local mesg=${1}
   echo "Error: ${mesg}"
-  if [[ `function_exists "usage"` -eq 0 ]]
+  if [[ $(function_exists "usage") -eq 0 ]]
   then
     usage
   fi

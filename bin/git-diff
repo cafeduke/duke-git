@@ -32,6 +32,9 @@ then
 fi
 
 # Store names of files to be diffed in an array 'arr_diff_name'
+# Names are relative to GIT_ROOT
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd ${GIT_ROOT}
 files=$(git diff --name-only "$@")
 if [[ -z "${files}" ]]
 then
