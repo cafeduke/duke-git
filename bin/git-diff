@@ -10,7 +10,7 @@ source "${BASEDIR}/util.sh"
 
 function usage {
   echo "Wrapper around 'git diff' to list one file at a time."
-  echo "Do NOT use '--' and '--name-only' options of 'git diff' as it is used by the wrapper"
+  echo "To diff only chosen file(s), use format: git-diff [<options>] -- <path...>"
   echo ""
   echo "Usage: ${BASENAME} <arguments that 'git diff' takes>"
   exit 0
@@ -32,9 +32,6 @@ then
 fi
 
 # Store names of files to be diffed in an array 'arr_diff_name'
-# Names are relative to GIT_ROOT
-GIT_ROOT=$(git rev-parse --show-toplevel)
-cd ${GIT_ROOT}
 files=$(git diff --name-only "$@")
 if [[ -z "${files}" ]]
 then
@@ -43,12 +40,19 @@ then
 fi
 mapfile -t arr_diff_name <<< $(echo "${files}")
 
+# Names are relative to GIT_ROOT
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd ${GIT_ROOT}
+
+# Remmove any arguments including and after --
+diffOptions=$(echo "$@" | sed "s% \-\-.*%%")
+
 index=0
 while [[ ${index} -lt ${#arr_diff_name[@]} ]]
 do
   clear
   currFile="${arr_diff_name[$index]}"
-  content=$(git diff --color=always $@ -- "${currFile}")
+  content=$(git diff --color=always ${diffOptions} -- ${currFile})
   echo "
 ____________________ Begin ${currFile} ____________________
 ${content}

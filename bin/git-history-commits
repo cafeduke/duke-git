@@ -40,7 +40,7 @@ then
     count="${1}"
   else
     branch="${1}"
-  fi  
+  fi
 elif [[ ${#} -eq 2 ]]
 then
   branch="${1}"
@@ -55,12 +55,12 @@ if [[ "$islong" == true ]]
 then
   git log \
     --color=always \
-    --pretty=format:"%C(yellow bold)%H%Creset|%s|%aN|%ad|%C(green bold)%d%n" \
+    --pretty=format:"%C(yellow bold)%H%Cresetλ%sλ%aNλ%adλ%C(green bold)%d%n" \
     --date=format:'%a,%d-%b-%Y %H:%M:%S' \
-    -n ${count} ${branch} | column -s "|" -t
+    -n ${count} ${branch} | column -s "λ" -t
 else
   git log \
     --color=always \
-    --pretty=format:"%C(yellow bold)%h%Creset|%s|%C(green bold)%d%n" \
-    -n ${count} ${branch} | column -s "|" -t
+    --pretty=format:"%C(yellow bold)%h%Cresetλ%sλ%C(green bold)%d%n" \
+    -n ${count} ${branch} | column -s "λ" -t
 fi
