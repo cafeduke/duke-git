@@ -5,20 +5,32 @@ Easy, intuitive, add-on git commands (bash shell scripts).
 
 The project provides a bunch of executable bash shell scripts that can be added to PATH and used as add-on git commands. These shell scripts begin with `git-`. In essence, we shall have custom, intuitive git commands to accomplish frequent tasks in git.
 
-# Install
+# Install and configure
 
-Navigate to [Releases page of duke-git](https://github.com/cafeduke/duke-git/releases) , download, extract the latest release and execute `install.sh`
+## Install
 
-```bash
-# Lets say the latest release has been downloaded to $HOME/Downloads/duke-git-<version>.zip
-> unzip -q $HOME/Downloads/duke-git-<version>.zip -d /tmp/
-> cd /tmp/duke-git-<version>
-> install.sh
-Installed in /home/raghu/bin/duke-git
-Please add /home/raghu/bin/duke-git to PATH environment variable.
+### Default installation
 
-# Edit $HOME/.profile and add the following entry.
-export PATH=${PATH}:${HOME}/bin/duke-git
+By default `duke-git` shall be installed in `$HOME` 
+
+```shell
+bash <(wget --quiet --output-document=- https://raw.githubusercontent.com/cafeduke/duke-git/master/install.sh)
+```
+
+### Install in custom directory
+
+Use the following command to install `duke-git` in custom directory `<path-to-custom-dir>`
+
+```shell
+bash <(echo "set -- <path-to-custom-dir>" && wget --quiet --output-document=- https://raw.githubusercontent.com/cafeduke/duke-git/master/install.sh)
+```
+
+## Add binary to path
+
+```shell
+# Edit $HOME/.profile and add $HOME/duke-git/bin as shown in below example
+# Note: If you have provided <path-to-custom-dir>, add <path-to-custom-dir>/duke-git/bin to PATH
+export PATH=${PATH}:${HOME}/duke-git/bin
 
 # Reload
 source ~/.profile

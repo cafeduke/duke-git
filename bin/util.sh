@@ -27,15 +27,15 @@ function checkAndProceed {
 # 1. Checks for any merge conflicts
 # 2. Lists the conflicts
 # 3. Prompts user to open 'meld' (A UI tool to resolve merge conflicts) to resolve merge conflits.
-#   3.1. If meld is not configured in ~/.gitconfig, the file is updated. 
+#   3.1. If meld is not configured in ~/.gitconfig, the file is updated.
 #   3.2. If meld is not installed and user is prompted to install meld -- The function exits with error.
 # 4. Open meld to resolve merge conflits
 #
 # The above steps are repeated until all merge conflicts are resolved.
-# 
+#
 # @return : Return 0 if there were no merge conflicts to begin with, 1 otherwise.
 ##
-function checkMergeConflit {  
+function checkMergeConflit {
   local hadConflit=0
   mergeConflit=$(git diff --name-only --diff-filter=U)
   while [[ ! -z "${mergeConflit}" ]]
@@ -68,7 +68,7 @@ function checkMeld {
     echo "Configuring meld"
     git config --global diff.tool meld
     git config --global difftool.prompt false
-  fi  
+  fi
 
   which meld &> /dev/null
   dieOnError "Install meld (sudo apt install meld). Required to resolve conflit."
@@ -77,7 +77,7 @@ function checkMeld {
 
 ##
 # Check if a function by name <$1> exists. Return 0 if function exists.
-## 
+##
 function function_exists {
   local fname=${1}
   declare -f -F ${fname} >& /dev/null
@@ -97,13 +97,13 @@ function array_contains {
   local to_find=${1}
   shift
   local arr=(${@})
-  
+
   for curr in ${arr[@]}
   do
     if [[ "${curr}" == "${to_find}" ]]
     then
       return 0
-    fi      
+    fi
   done
   return 1
 }
@@ -133,7 +133,7 @@ function heading {
   for mesg in "$@"
   do
     echo "${mesg}"
-  done  
+  done
   echo "---------------------------------------------------------------------------------------------------"
 }
 
@@ -149,13 +149,13 @@ function highlight {
   for mesg in "$@"
   do
     echo "${mesg}"
-  done  
+  done
   echo "###################################################################################################"
 }
 
 ##
 # Print the error message, usage and exit. A callback to function by name 'usage' is made if it exists.
-# 
+#
 # Arguments:
 #   mesg - Error message
 ##
