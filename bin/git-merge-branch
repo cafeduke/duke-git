@@ -12,7 +12,14 @@ function usage {
   echo "Merge <source/child branch> into <target/parent branch>"
   echo "The <target branch> defaults to the current branch"
   echo ""
-  echo "Usage: ${BASENAME} <source branch> [<target branch>]"
+  echo "Usage: ${BASENAME} [--squash] <source/child branch> [<target/parent branch>]"
+  echo ""
+  echo "Working:"
+  echo "  - Switch to <target> branch and merge <source> into it."
+  echo "  - The <source> branch remains unaltered after merge."
+  echo ""
+  echo "Options:"
+  echo "  --squash : Combine all the commints of <source/child branch> into a single commit"
   exit 0
 }
 
@@ -24,14 +31,21 @@ then
   usage
 fi
 
+squashChildCommits=""
+if [[ ${#} -ge 1 && "${1}" == "--squash" ]]
+then
+  squashChildCommits=" --squash "
+  shift
+fi
+
 if [[ ${#} -eq 1 ]]
 then
-  sourceBranch="${1}"
-  targetBranch=$(git branch --show-current)
+  childBranch="${1}"
+  parentBranch=$(git branch --show-current)
 elif [[ ${#} -eq 2 ]]
 then
-  sourceBranch="${1}"
-  targetBranch="${2}"
+  childBranch="${1}"
+  parentBranch="${2}"
 else
   dieUsage "Incorrect argument count ${#}"
 fi
@@ -40,22 +54,30 @@ fi
 # Main
 # -------------------------------------------------------------------------------------------------
 
+heading "Merge ${childBranch} --> ${parentBranch}"
+if [[ "${childBranch}" == "${parentBranch}" ]]
+then
+  dieOnError "Source and target are same"
+fi
+
 set +e
 
-heading "Pull latest commits from origin/${targetBranch}"
-git checkout ${targetBranch}
-git pull
+heading "Pull latest commits from origin/${parentBranch}"
+git checkout ${parentBranch}
+git pull origin ${parentBranch}
 dieOnError "Git pull failed"
 
-heading "[TargetBranch=${targetBranch}] Top 10 commits"
-git-history-commits ${targetBranch} 10
+heading "[TargetBranch=${parentBranch}] Top 10 commits"
+echo "git-history-commits ${parentBranch} 10"
+git-history-commits ${parentBranch} 10
 
-heading "[SourceBranch=${sourceBranch}] Top 10 commits"
-git-history-commits ${sourceBranch} 10
+heading "[SourceBranch=${childBranch}] Top 10 commits"
+echo "git-history-commits ${childBranch} 10"
+git-history-commits ${childBranch} 10
 
-heading "Merge ${sourceBranch} --> ${targetBranch}"
-checkAndProceed "Merge ${sourceBranch}"
-git merge ${sourceBranch}
+heading "Merge ${childBranch} --> ${parentBranch}"
+checkAndProceed "Merge ${childBranch}"
+git merge ${squashChildCommits} ${childBranch}
 
 checkMergeConflit
 isConflict=$?
@@ -65,5 +87,5 @@ then
   exit 0
 fi
 
-heading "[Branch=${targetBranch}] Top 10 commits AFTER merge"
+heading "[Branch=${parentBranch}] Top 10 commits AFTER merge"
 git-history 10

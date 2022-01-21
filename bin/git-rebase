@@ -44,14 +44,20 @@ fi
 # -------------------------------------------------------------------------------------------------
 GIT_ROOT=$(git rev-parse --show-toplevel)
 
+# Determine current branch
+currBranch=$(git rev-parse --abbrev-ref HEAD)
+
 # Update the <parBranch> from remote
 set +e
 heading "Update parent branch '${parBranch}'"
+git checkout ${parBranch}
 git pull ${remote} ${parBranch}
 dieOnError "Git pull failed"
 
-# Get the merge point
-currBranch=$(git rev-parse --abbrev-ref HEAD)
+# Get back to current branch
+git checkout ${currBranch}
+
+# Determine merge point
 mergePointSHA=$(git merge-base ${currBranch} ${parBranch})
 
 heading "[Branch=${currBranch}] Top 10 commits BEFORE rebase"
