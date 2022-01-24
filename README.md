@@ -41,8 +41,8 @@ source ~/.profile
 - [Download](https://github.com/cafeduke/duke-git/archive/refs/heads/master.zip) latest zip
 - Extract contents to desired folder say `C:\Programs`
 - Rename `C:\Programs\duke-git-master` to `C:\Programs\duke-git`
-- Add ``C:\Programs\duke-git\bin` to `PATH` environment variable. Click [here](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/) for details.
-- Install [Git](https://git-scm.com/downloads) and use [Git Bash](https://www.atlassian.com/git/tutorials/git-bash) 
+- Add `C:\Programs\duke-git\bin` to `PATH` environment variable. Click [here](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/) for details.
+- Install [Git](https://git-scm.com/downloads) and use [Git Bash](https://www.geeksforgeeks.org/working-on-git-bash/)
 
 
 # Commands
