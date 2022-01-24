@@ -42,7 +42,7 @@ fi
 # Main
 # -------------------------------------------------------------------------------------------------
 
-# Using 'git resore --staged' instead of 'git rm --cached'. 
+# Using 'git resore --staged' instead of 'git rm --cached'.
 # The rm command has issues
 #  - A 'git status' shows 'deleted' as staged status. So, it is not a clean undo (As if never staged)
 git restore --staged -- ${@}

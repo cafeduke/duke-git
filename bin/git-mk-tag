@@ -24,13 +24,13 @@ then
   usage
 fi
 
-# Annotated tag 
+# Annotated tag
 type="-a"
 
 if [[ ${#} -ne 3 ]]
 then
   dieUsage "Incorrect usage"
-fi  
+fi
 name=${1}
 commit=${2}
 mesg=${3}

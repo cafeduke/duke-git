@@ -7,11 +7,11 @@ The project provides a bunch of executable bash shell scripts that can be added 
 
 # Install and configure
 
-## Install
+## Install on Linux
 
 ### Default installation
 
-By default `duke-git` shall be installed in `$HOME` 
+By default `duke-git` shall be installed in `$HOME`
 
 ```shell
 bash <(wget --quiet --output-document=- https://raw.githubusercontent.com/cafeduke/duke-git/master/install.sh)
@@ -25,7 +25,7 @@ Use the following command to install `duke-git` in custom directory `<path-to-cu
 bash <(echo "set -- <path-to-custom-dir>" && wget --quiet --output-document=- https://raw.githubusercontent.com/cafeduke/duke-git/master/install.sh)
 ```
 
-## Add binary to path
+### Add binary to path
 
 ```shell
 # Edit $HOME/.profile and add $HOME/duke-git/bin as shown in below example
@@ -35,6 +35,15 @@ export PATH=${PATH}:${HOME}/duke-git/bin
 # Reload
 source ~/.profile
 ```
+
+## Install on Windows
+
+- [Download](https://github.com/cafeduke/duke-git/archive/refs/heads/master.zip) latest zip
+- Extract contents to desired folder say `C:\Programs`
+- Rename `C:\Programs\duke-git-master` to `C:\Programs\duke-git`
+- Add ``C:\Programs\duke-git\bin` to `PATH` environment variable. Click [here](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/) for details.
+- Install [Git](https://git-scm.com/downloads) and use [Git Bash](https://www.atlassian.com/git/tutorials/git-bash) 
+
 
 # Commands
 

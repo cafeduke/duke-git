@@ -29,7 +29,7 @@ fi
 
 if [[ ${#} -eq 0 || ${#} -gt 2 ]]
 then
-  dieUsage "Invalid argument count ${#}" 
+  dieUsage "Invalid argument count ${#}"
 fi
 
 # The number of commits to join

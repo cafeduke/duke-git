@@ -40,6 +40,6 @@ if [[ ! "${list}" =~ "${name}" ]]
 then
   git branch ${name}
 else
-  echo "Branch ${name} already exists."
+  echo "Branch ${name} already exists in local repository."
 fi
 git checkout --quiet ${name}

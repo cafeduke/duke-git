@@ -1,15 +1,5 @@
 #!/bin/bash -e
 
-##
-# Description
-# -----------
-# Cat/show the contents of a single file in commit.
-#
-# Error Handling
-# --------------
-# StagedFileNotFound: Handled by 'git show'
-##
-
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
@@ -19,9 +9,10 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Print contents of file from commit (default commit is 'HEAD')"
+  echo "Rename branch <old-branch-name> to <new-branch-name>"
+  echo "By default, <old-branch-name> is current branch"
   echo ""
-  echo "Usage: ${BASENAME} [<commit>] <path to file>"
+  echo "Usage: ${BASENAME} [<old-branch-name>] <new-branch-name>"
   exit 0
 }
 
@@ -33,19 +24,26 @@ then
   usage
 fi
 
-commit="HEAD"
+oldBranch=""
+newBranch=""
 if [[ ${#} -eq 1 ]]
 then
-  pathToFile="${1}"
+  newBranch="${1}"
 elif [[ ${#} -eq 2 ]]
 then
-  commit="${1}"
-  pathToFile="${2}"
+  oldBranch="${1}"
+  newBranch="${2}"
 else
-  dieUsage "Incorrect argument count ${#}."
+  dieUsage "Incorrect argument count ${#}"
 fi
 
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-git show ${commit}:${pathToFile}
+
+if [[ "${oldBranch}" == "" ]]
+then
+  git branch -m "${newBranch}"
+else
+  git branch -m "${oldBranch}" "${newBranch}"
+fi

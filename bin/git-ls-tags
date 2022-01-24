@@ -26,12 +26,12 @@ fi
 if [[ ${#} -ne 0 ]]
 then
   dieUsage "Incorrect argument count"
-fi  
+fi
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
 rm -f /tmp/tag
-for tag in $(git tag --list)    
+for tag in $(git tag --list)
 do
   # The text has two lines of output
   text=$(git show -s --format="%S|%h|%s|%an|%cI" ${tag} | tail -2)
@@ -42,18 +42,18 @@ do
 
   # Convert the '|' separated fields in text to array
   arr_tag=()
-  mapfile -t -d '|' arr_tag <<< ${tag_field} 
+  mapfile -t -d '|' arr_tag <<< ${tag_field}
 
   # Unfortunately, mapfile shall result in the last field having an additional newline
   # len=${#arr_tag[@]}
   arr_tag[len-1]=$(trim ${arr_tag[len-1]})
 
-  # Appending to array using double quotes will ensure a single string is added 
+  # Appending to array using double quotes will ensure a single string is added
   # (rather than individual words of the string each added as array element)
   arr_tag+=("${tag_subject}")
 
   printf "%s|%s|%s|%s|%s|%s\n" "${arr_tag[0]}" "'${arr_tag[5]}'" "${arr_tag[1]}" "'${arr_tag[2]}'" "${arr_tag[3]}" "${arr_tag[4]}"  >> /tmp/tag
- 
+
 done
 column -t -s'|' /tmp/tag
 rm -f /tmp/tag

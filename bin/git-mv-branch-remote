@@ -9,9 +9,9 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Create a <branch> (if not already present) and switch to the <branch>."
+  echo "Rename branch on local repository and on remote (default origin) repository."
   echo ""
-  echo "Usage: ${BASENAME} <branch>"
+  echo "Usage: ${BASENAME} [<remote>] <old-branch-name> <new-branch-name>"
   exit 0
 }
 
@@ -23,12 +23,20 @@ then
   usage
 fi
 
-if [[ ${#} -ne 1 ]]
+remote="origin"
+if [[ ${#} -eq 3 ]]
+then
+  remote="$1"
+  shift
+fi
+
+if [[ "$#" -ne 2 ]]
 then
   dieUsage "Incorrect argument count ${#}"
 fi
 
-name=${1}
+oldBranch="${1}"
+newBranch="${2}"
 
 # -------------------------------------------------------------------------------------------------
 # Main
@@ -36,10 +44,14 @@ name=${1}
 
 # In awk NF is number of fields, so this prints the last column
 list=$(git branch | awk '{print $NF}')
-if [[ ! "${list}" =~ "${name}" ]]
+if [[ ! "${list}" =~ "${oldBranch}" ]]
 then
-  git branch ${name}
+  echo "Local branch ${oldBranch} does not exist. Skipping local rename."
 else
-  echo "Branch ${name} already exists in local repository."
+  echo "Renaming local branch: ${oldBranch} --> ${newBranch}"
+  echo "-------------------------------------------------------------------------------------------------"
+  git-mv-branch ${oldBranch} ${newBranch}
 fi
-git checkout --quiet ${name}
+echo "Renaming remote branch: ${oldBranch} --> ${newBranch}"
+echo "-------------------------------------------------------------------------------------------------"
+git push ${remote} -u ${newBranch}

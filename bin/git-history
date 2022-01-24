@@ -1,1 +1,66 @@
-git-history-commits
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "List commit history of last 'n' commits. By default, n=25, branch=<current checkout branch>"
+  echo ""
+  echo "Usage: ${BASENAME} [--long] [branch] [<number of commits>]"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+islong=false
+branch=""
+count="25"
+
+if [[ ${#} -ge 1 && "${1}" == "--long" ]]
+then
+  islong=true
+  shift
+fi
+
+if [[ ${#} -eq 1 ]]
+then
+  if [[ "${1}" =~ ^[0-9]+$ ]]
+  then
+    count="${1}"
+  else
+    branch="${1}"
+  fi
+elif [[ ${#} -eq 2 ]]
+then
+  branch="${1}"
+  count="${2}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+if [[ "$islong" == true ]]
+then
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%H%Cresetλ%sλ%aNλ%adλ%C(green bold)%d%n" \
+    --date=format:'%a,%d-%b-%Y %H:%M:%S' \
+    -n ${count} ${branch} | column -s "λ" -t
+else
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%h%Cresetλ%sλ%C(green bold)%d%n" \
+    -n ${count} ${branch} | column -s "λ" -t
+fi

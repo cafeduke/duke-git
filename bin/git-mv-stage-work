@@ -3,12 +3,12 @@
 ##
 # Description
 # -----------
-# Remove files from index. These files shall now be untracked. 
+# Remove files from index. These files shall now be untracked.
 # This is an undo operation for add. So, it is as if the files were never added to index (stage).
 #
 # Error Handling
 # --------------
-# 
+#
 ##
 
 # -------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ source "${BASEDIR}/util.sh"
 function usage {
   echo "Move files from stage to workspace"
   echo ""
-  echo "Usage: ${BASENAME} <file1> [<file2 ... <filen>]"  
+  echo "Usage: ${BASENAME} <file1> [<file2 ... <filen>]"
   exit 0
 }
 
