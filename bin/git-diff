@@ -9,10 +9,24 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
+  echo "Usage:"
+  echo "${BASENAME} <options that 'git diff' takes>"
+  echo "${BASENAME} <options that 'git diff' takes> -- <path...>"
+  echo ""
   echo "Wrapper around 'git diff' to list one file at a time."
   echo "To diff only chosen file(s), use format: git-diff [<options>] -- <path...>"
   echo ""
-  echo "Usage: ${BASENAME} <arguments that 'git diff' takes>"
+  echo "Note:"
+  echo "Diff <a> with <b> means additions/deletions made to <a> to get <b>"
+  echo ""
+  echo "Examples:"
+  echo "git-diff                                                # Diff modified files in HEAD with work"
+  echo "git-diff <commit>                                       # Diff <commit> with HEAD"
+  echo "git diff HEAD~2 -- fruit.txt                            # Diff HEAD~2 with HEAD"
+  echo "git-diff <commit1>..<commit2>                           # Diff <commit1> with <commit2>"
+  echo "git-diff -- <file1> <file2>                             # Diff <file1> and <file2> in HEAD with work"
+  echo "git-diff <commit1>..<commit2> -- <file1> <file2>        # Diff <file1> and <file2> in <commit1> with <commit2>"
+
   exit 0
 }
 
@@ -31,26 +45,37 @@ then
   exit $?
 fi
 
-# Store names of files to be diffed in an array 'arr_diff_name'
-files=$(git diff --name-only "$@")
+# files shall have newline separated paths of files to be diffed
+if [[ "$@" =~ "--" ]]
+then
+  # Remove everything before ' -- ' to get files
+  files=$(echo "$@" | sed -re "s%.*\-\- +%%" | sed -re "s% +%\n%")
+else
+  # Argument '--' is not used so get files using $@
+  files=$(git diff --name-only "$@")
+fi
+
+# Remove everything after ' --' to get diffOptions
+diffOptions=$(echo "$@" | sed "s% \-\-.*%%")
+
+# If files is empty there is nothing to diff
 if [[ -z "${files}" ]]
 then
   echo "Nothing to diff"
   exit 0
 fi
+
+# Construct an array arr_diff_name with files. Each line has a path to file to be diffed.
 mapfile -t arr_diff_name <<< $(echo "${files}")
 
 # Names are relative to GIT_ROOT
 GIT_ROOT=$(git rev-parse --show-toplevel)
 cd ${GIT_ROOT}
 
-# Remmove any arguments including and after --
-diffOptions=$(echo "$@" | sed "s% \-\-.*%%")
-
 index=0
 while [[ ${index} -lt ${#arr_diff_name[@]} ]]
 do
-  clear
+  # clear
   currFile="${arr_diff_name[$index]}"
   content=$(git diff --color=always ${diffOptions} -- ${currFile})
   echo "
