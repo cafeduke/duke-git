@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+##
+# Description
+# -----------
+# Provide the web link for the commits
+##
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+
+function usage {
+  echo "Usage: ${0} [<commit1> <commit2> ... <commitN>]"
+  echo "Provide the web link for the commits"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [ ${#} -eq 0 ]
+then
+  commit=$(git rev-parse --short HEAD)
+else
+  commit="${@}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+projectPrefix=$(git config --get remote.origin.url | sed -re "s%.*:(.*)\.git%\1%")
+urlPrefix="https://github.com/${projectPrefix}/commit"
+
+for x in ${commit}
+do
+  echo "${urlPrefix}/${x}"
+done
