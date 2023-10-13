@@ -68,10 +68,6 @@ fi
 # Construct an array arr_diff_name with files. Each line has a path to file to be diffed.
 mapfile -t arr_diff_name <<< $(echo "${files}")
 
-# Names are relative to GIT_ROOT
-GIT_ROOT=$(git rev-parse --show-toplevel)
-cd ${GIT_ROOT}
-
 index=0
 while [[ ${index} -lt ${#arr_diff_name[@]} ]]
 do

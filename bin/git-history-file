@@ -1,0 +1,71 @@
+#!/bin/bash -e
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "List history of last 'n' commits where this file was modified. By default, n=25"
+  echo ""
+  echo "Usage: ${BASENAME} [--long] [<number of commits>] <file>"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+islong=false
+count="25"
+file=""
+if [[ ${#} -ge 1 && "${1}" == "--long" ]]
+then
+  islong=true
+  shift
+fi
+
+if [[ ${#} -eq 1 ]]
+then
+  file="${1}"
+elif [[ ${#} -eq 2 ]]
+then
+  count="${1}"
+  file="${2}"
+else
+  dieUsage "Invalid argument count ${#}"
+fi
+
+if [[ ! "${count}" =~ ^[0-9]+$ ]]
+then
+  dieUsage "<number of commits> is a number. Invalid argument '${1}'"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+
+if [[ "$islong" == true ]]
+then
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%H%Cresetλ%sλ%aNλ%adλ%C(green bold)%d%n" \
+    --date=format:'%a,%d-%b-%Y %H:%M:%S' \
+    --follow \
+    -n ${count} \
+    -- ${file} | column -s "λ" -t
+else
+  git log \
+    --color=always \
+    --pretty=format:"%C(yellow bold)%h%Cresetλ%sλ%C(green bold)%d%n" \
+    --follow \
+    -n ${count} \
+    -- ${file} | column -s "λ" -t
+fi
