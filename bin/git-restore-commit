@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+##
+# Description
+# -----------
+# Restore <commit> works as follows
+#   - Discard all commits ahead of given <commit>
+#   - The work will have files as they were in <commit>
+#   - The history is not modified.
+#
+# The user can modify and commit changes as usual.
+#
+# Usecase
+# -------
+# Certain repos do not allow overwriting history (Even on a custom branch)
+# The following commands shall fail:
+#   $ git reset --hard <commit> && git push --force
+#
+# As a workaround we can restore the <commit> back to stage
+#   $ git-restore-commit <commit> && git commit --all -m "Bringing back the sane state" && git push
+##
+
+# -------------------------------------------------------------------------------------------------
+# Functions
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Restore work to a state, where we are now working on files, as they were in <commit>"
+  echo ""
+  echo "Restore <commit> works as follows:"
+  echo " - Discard all commits ahead of given <commit>"
+  echo " - The stage will have files as they were in <commit>"
+  echo " - The history is not modified."
+
+  echo ""
+  echo "Usage: ${BASENAME} <commit>"
+  exit 0
+}
+
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ ${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help") ]]
+then
+  usage
+fi
+
+if [[ ${#} -ne 1 ]]
+then
+  dieUsage "Incorrect argument count ${#}."
+fi
+
+commit="${1}"
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+git revert --no-commit ${commit}..HEAD
