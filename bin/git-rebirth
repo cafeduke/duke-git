@@ -9,10 +9,10 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Delete both local and remote branches (if present)"
+  echo "Rebasing a branch is NOT allowed if history cannot be overwritten. The alternative is to merge old branch with parent, create new and delete old branch"
+  echo "The <remote> defaults to 'origin'"
   echo ""
-  echo "Usage: ${BASENAME} [<remote>] <branch name>"
-  echo "  - <remote> defaults to 'origin'"
+  echo "Usage: ${BASENAME} [<remote>] <child branch> <new child branch> <parent branch>"
   exit 0
 }
 
@@ -24,29 +24,31 @@ then
   usage
 fi
 
+if [[ ${#} -lt 3 || ${#} -gt 4 ]]
+then
+  dieUsage "Invalid argument count ${#}"
+fi
+
 remote="origin"
-if [[ ${#} -eq 1 ]]
+if [[ ${#} -eq 3 ]]
 then
-  branch="$1"
-elif [[ ${#} -eq 2 ]]
+  childBranch="${1}"
+  newChildBranch="${2}"
+  parBranch="${3}"
+elif [[ ${#} -eq 4 ]]
 then
-  remote="$1"
-  branch="$2"
-else
-  dieUsage "Incorrect argument count ${#}"
+  remote="${1}"
+  childBranch="${2}"
+  newChildBranch="${3}"
+  parBranch="${4}"
 fi
 
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-set +e
-echo ""
-echo "Deleting remote branch"
-echo "----------------------"
-git-rm-branch-remote "${remote}" "${branch}"
 
-echo ""
-echo "Deleting local branch"
-echo "---------------------"
-git-rm-branch-local  "${branch}"
-set -e
+highlight "Merge ${childBranch} to ${parBranch}"
+git-merge-branch --squash "${childBranch}" "${parBranch}"
+
+highlight "Create branch ${newChildBranch}"
+git-mk-branch-remote "${remote}" "${newChildBranch}"

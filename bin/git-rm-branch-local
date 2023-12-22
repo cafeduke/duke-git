@@ -9,10 +9,9 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Delete both local and remote branches (if present)"
+  echo "Delete a branch (if present)"
   echo ""
-  echo "Usage: ${BASENAME} [<remote>] <branch name>"
-  echo "  - <remote> defaults to 'origin'"
+  echo "Usage: ${BASENAME} <branch name>"
   exit 0
 }
 
@@ -24,29 +23,14 @@ then
   usage
 fi
 
-remote="origin"
-if [[ ${#} -eq 1 ]]
+if [[ ${#} -ne 1 ]]
 then
-  branch="$1"
-elif [[ ${#} -eq 2 ]]
-then
-  remote="$1"
-  branch="$2"
-else
   dieUsage "Incorrect argument count ${#}"
 fi
+
+name=${1}
 
 # -------------------------------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------------------------------
-set +e
-echo ""
-echo "Deleting remote branch"
-echo "----------------------"
-git-rm-branch-remote "${remote}" "${branch}"
-
-echo ""
-echo "Deleting local branch"
-echo "---------------------"
-git-rm-branch-local  "${branch}"
-set -e
+git branch -D ${name}
