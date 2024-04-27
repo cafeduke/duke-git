@@ -9,10 +9,11 @@ BASENAME=$(basename ${0})
 source "${BASEDIR}/util.sh"
 
 function usage {
-  echo "Rebasing a branch is NOT allowed if history cannot be overwritten. The alternative is to merge old branch with parent, create new and delete old branch"
-  echo "The <remote> defaults to 'origin'"
+  echo "Rebasing a branch is NOT allowed if history cannot be overwritten. The alternative is to merge child-branch with parent, create new-child-branch and delete child-branch"
+  echo "The new-child-branch has files (to be committed) resulting from merging of child-branch and parent."
   echo ""
   echo "Usage: ${BASENAME} [<remote>] <child branch> <new child branch> <parent branch>"
+  echo "  - The <remote> defaults to 'origin'"
   exit 0
 }
 
@@ -52,3 +53,5 @@ git-merge-branch --squash "${childBranch}" "${parBranch}"
 
 highlight "Create branch ${newChildBranch}"
 git-mk-branch-remote "${remote}" "${newChildBranch}"
+
+highlight ""
