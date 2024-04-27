@@ -1,0 +1,73 @@
+#!/bin/bash -e
+
+##
+# Remove branches that no longer exist on remote repository
+##
+
+# -------------------------------------------------------------------------------------------------
+# Function
+# -------------------------------------------------------------------------------------------------
+BASEDIR=$(dirname $(readlink -f ${0}))
+BASENAME=$(basename ${0})
+
+source "${BASEDIR}/util.sh"
+
+function usage {
+  echo "Remove dangling local/remote branch references that no longer exist on remote repository"
+  echo ""
+  echo "Usage: ${BASENAME} [<remote>]"
+  exit 0
+}
+# -------------------------------------------------------------------------------------------------
+# Parse Arg
+# -------------------------------------------------------------------------------------------------
+if [[ (${#} -eq 1 && ("${1}" == "-h" || "${1}" == "--help")) ]]
+then
+  usage
+  exit 0
+fi
+
+remote="origin"
+if [[ ${#} -eq 1 ]]
+then
+  remote="$1"
+  shift
+elif [[ ${#} -gt 1 ]]
+then
+  dieUsage "Incorrect argument count ${#}"
+fi
+
+# -------------------------------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------------------------------
+# git ls-remote origin dev_mango_v2
+heading "Prune dangling remote branches"
+git checkout master
+git pull --prune
+
+heading "Prune dangling local branches"
+
+# Capture all local branches
+git branch | tr -d ' *' | sort -u > /tmp/dukegit-branch-local
+
+# Feed all local branches to 'git ls-remote <remote> <branch...>'
+# This will list the branch only if it has a remote counterpart. Now, extract only the branch name.
+git ls-remote ${remote} $(cat /tmp/dukegit-branch-local) | awk '{print $2}' | sed "s%.*/%%" | sort -u > /tmp/dukegit-branch-intact
+
+comm -23 /tmp/dukegit-branch-local /tmp/dukegit-branch-intact > /tmp/dukegit-branch-dangling
+
+for curr in $(cat /tmp/dukegit-branch-dangling)
+do
+  echo ""
+  echo "---------------------------------------------------------------------------------------------------"
+  echo "Delete dangling local-branch ${curr} (y|[n]) ?"
+  read yorn
+
+  if [[ ! -z "${yorn}" && "${yorn}" != "y" ]]
+  then
+    continue
+  fi
+  git branch -D ${curr}
+done
+
+rm -f /tmp/dukegit-*
